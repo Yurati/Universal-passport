@@ -1,9 +1,12 @@
 package utils;
 
+import transactions.Transaction;
+
 import java.security.Key;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.Signature;
+import java.util.ArrayList;
 import java.util.Base64;
 
 public class KeyUtils {

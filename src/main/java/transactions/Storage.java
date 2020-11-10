@@ -1,11 +1,16 @@
 package transactions;
 
+import chain.Blockchain;
+import data.Passport;
+
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.SecureRandom;
 import java.security.spec.ECGenParameterSpec;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -13,9 +18,17 @@ public class Storage {
     private static final Logger LOGGER = Logger.getLogger("Storage");
     private PrivateKey privateKey;
     public PublicKey publicKey;
+    public HashMap<String, Transaction> storageTransactions;
+    private Passport passport;
 
-    public Storage() {
+    public Storage(Passport passport) {
         generateKeyPair();
+        storageTransactions = new HashMap<>();
+        this.passport = passport;
+    }
+
+    public void updatePassport(ArrayList<Transaction> transactions){
+        //TODO: add update for passport data based on transactions
     }
 
     private void generateKeyPair() {

@@ -13,15 +13,14 @@ public class Block {
     private static final Logger LOGGER = Logger.getLogger("Block");
     private String hash;
     private final String previousHash;
-    public String merkleRoot;
-    public ArrayList<Transaction> transactions = new ArrayList<Transaction>(); //our data will be a simple message.
+    public ArrayList<Transaction> transactions;
     private final long timeStamp;
     private int nonce;
 
     public Block(String previousHash) {
         this.previousHash = previousHash;
-        this.timeStamp = new Date().getTime();;
-        this.hash = calculateBlockHash();
+        this.timeStamp = new Date().getTime();
+        transactions = new ArrayList<>();
     }
 
     public String mineBlock(int prefix) {
@@ -34,26 +33,19 @@ public class Block {
         return hash;
     }
 
+    public boolean addTransaction(Transaction transaction) {
+        if(transaction == null) return false;
+        transactions.add(transaction);
+        LOGGER.info(String.format("Transaction %s successfully added to block", transaction.getTransactionId()));
+        return true;
+    }
+
     private String calculateBlockHash() {
         LOGGER.info("Calculating hash for block");
         String dataToHash = previousHash
                 + timeStamp
                 + nonce
-                + merkleRoot;
+                + BlockUtils.getMerkleRoot(transactions);
         return BlockUtils.applySha256(dataToHash);
-    }
-
-    public boolean addTransaction(Transaction transaction) {
-        LOGGER.info(String.format("Adding transaction to block %s", hash));
-        if(transaction == null) return false;
-        if((!previousHash.equals("0"))) {
-            if((!transaction.processTransaction())) {
-                LOGGER.warning("Transaction failed to process");
-                return false;
-            }
-        }
-        transactions.add(transaction);
-        LOGGER.info(String.format("Transaction successfully added to block %s", hash));
-        return true;
     }
 }
