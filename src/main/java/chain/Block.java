@@ -19,7 +19,7 @@ public class Block {
 
     public Block(String previousHash) {
         this.previousHash = previousHash;
-        this.timeStamp = new Date().getTime();
+        this.timeStamp = System.currentTimeMillis();
         transactions = new ArrayList<>();
     }
 

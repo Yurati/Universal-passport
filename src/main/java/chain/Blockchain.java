@@ -25,7 +25,7 @@ public class Blockchain {
         for (int i = 1; i < blockchain.size(); i++) {
             currentBlock = blockchain.get(i);
             previousBlock = blockchain.get(i - 1);
-            if (currentBlock.getPreviousHash().equals(previousBlock.getHash())) {
+            if (!currentBlock.getPreviousHash().equals(previousBlock.getHash())) {
                 LOGGER.warning("Chain is corrupted!");
                 return false;
             }
