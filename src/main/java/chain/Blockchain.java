@@ -63,6 +63,7 @@ public class Blockchain {
     }
 
     private Passport generatePassport(List<Transaction> transactions) {
+
         //TODO: generate passport data based on transactions
         return null;
     }
