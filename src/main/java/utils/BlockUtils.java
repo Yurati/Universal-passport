@@ -5,6 +5,7 @@ import transactions.Transaction;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.util.ArrayList;
+import java.util.List;
 
 public final class BlockUtils {
     public static String applySha256(String input) {
@@ -24,7 +25,7 @@ public final class BlockUtils {
         }
     }
 
-    public static String getMerkleRoot(ArrayList<Transaction> transactions) {
+    public static String getMerkleRoot(List<Transaction> transactions) {
         int count = transactions.size();
         ArrayList<String> previousTreeLayer = new ArrayList<>();
         for (Transaction transaction : transactions) {

@@ -7,6 +7,7 @@ import java.util.Date;
 
 @Data
 public class Passport {
+    private String id;
     private Person person;
     private Date issueDate;
     private Date expirationDate;

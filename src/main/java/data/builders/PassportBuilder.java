@@ -6,6 +6,7 @@ import data.components.Person;
 import java.util.Date;
 
 public final class PassportBuilder {
+    private String id;
     private Person person;
     private Date issueDate;
     private Date expirationDate;
@@ -16,8 +17,13 @@ public final class PassportBuilder {
     private PassportBuilder() {
     }
 
-    public static PassportBuilder aPassport() {
+    public static PassportBuilder passportBuilder() {
         return new PassportBuilder();
+    }
+
+    public PassportBuilder withId(String id) {
+        this.id = id;
+        return this;
     }
 
     public PassportBuilder withPerson(Person person) {
@@ -52,6 +58,7 @@ public final class PassportBuilder {
 
     public Passport build() {
         Passport passport = new Passport();
+        passport.setId(id);
         passport.setPerson(person);
         passport.setIssueDate(issueDate);
         passport.setExpirationDate(expirationDate);

@@ -1,12 +1,9 @@
 package utils;
 
-import transactions.Transaction;
-
 import java.security.Key;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.Signature;
-import java.util.ArrayList;
 import java.util.Base64;
 
 public class KeyUtils {
@@ -31,7 +28,7 @@ public class KeyUtils {
             ecdsaVerify.initVerify(publicKey);
             ecdsaVerify.update(data.getBytes());
             return ecdsaVerify.verify(signature);
-        }catch(Exception e) {
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }

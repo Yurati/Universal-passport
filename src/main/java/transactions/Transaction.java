@@ -14,29 +14,31 @@ public class Transaction {
     @Getter
     private String transactionId;
     private final PublicKey sender;
-    private final PublicKey recipient;
+    @Getter
+    private final String passportId;
     private final Operation operation;
     private byte[] signature;
 
     private static long sequence = 0; // a rough count of how many transactions have been generated.
 
-    public Transaction(PublicKey from, PublicKey to, Operation operation) {
+    public Transaction(PublicKey from, String to, Operation operation) {
         this.sender = from;
-        this.recipient = to;
+        this.passportId = to;
         this.operation = operation;
         transactionId = calculateHash();
     }
 
     public void generateSignature(PrivateKey privateKey) {
-        String data = KeyUtils.getStringFromKey(sender) + KeyUtils.getStringFromKey(recipient) + operation;
+        String data = KeyUtils.getStringFromKey(sender) + passportId + operation;
         signature = KeyUtils.applyECDSASig(privateKey, data);
     }
 
     public boolean verifySignature() {
-        String data = KeyUtils.getStringFromKey(sender) + KeyUtils.getStringFromKey(recipient) + operation;
+        String data = KeyUtils.getStringFromKey(sender) + passportId + operation;
         return KeyUtils.verifyECDSASig(sender, data, signature);
     }
 
+    //TODO: how to process transaction?
     public void processTransaction() {
         if (!verifySignature()) {
             LOGGER.severe("Signature failed to verify!");
@@ -48,7 +50,7 @@ public class Transaction {
         sequence++;
         return BlockUtils.applySha256(
                 KeyUtils.getStringFromKey(sender) +
-                        KeyUtils.getStringFromKey(recipient) +
+                        passportId +
                         operation + sequence
         );
     }
