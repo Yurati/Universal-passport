@@ -4,9 +4,10 @@ import data.Passport;
 import lombok.Getter;
 import transactions.Transaction;
 
-import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 import java.util.logging.Logger;
 
 public class Blockchain {
@@ -35,36 +36,32 @@ public class Blockchain {
         return true;
     }
 
-    public void addBlockToBlockchain(Block block) {
-        LOGGER.info(String.format("Adding block %s to blockchain.", block.getHash()));
-        blockchain.add(block);
-    }
-
     public Passport getPassport(String id) {
-        List<Transaction> transactionList = new ArrayList<>();
-        for (Block block : blockchain) {
-            List<Transaction> transactionsInBlock = block.getTransactionsForPassport(id);
-            if (!transactionsInBlock.isEmpty()) {
-                transactionList.addAll(transactionsInBlock);
-            }
+        Iterator<Block> lit = blockchain.descendingIterator();
+        while (lit.hasNext()) {
+            Block block = lit.next();
+            Optional<Transaction> transaction = block.getLastTransactionForPassport(id);
+            if (transaction.isPresent())
+                return transaction.get().getPassport();
         }
-        return generatePassport(transactionList);
+        return null;
     }
 
-    public String getHashOfLastBlock() {
-        return blockchain.getLast().getHash();
-    }
-
-    public Block mineBlock(String previousHash, List<Transaction> transactionList) {
-        Block block = new Block(previousHash, transactionList);
+    public void mineBlock(List<Transaction> transactionList) {
+        Block block;
+        if (blockchain.isEmpty()) {
+            block = new Block(null, transactionList);
+        } else {
+            String previousHash = blockchain.getLast().getHash();
+            block = new Block(previousHash, transactionList);
+        }
         LOGGER.info("Mining block!");
         block.mineBlock(DIFFICULTY);
-        return block;
+        addBlockToBlockchain(block);
     }
 
-    private Passport generatePassport(List<Transaction> transactions) {
-
-        //TODO: generate passport data based on transactions
-        return null;
+    private void addBlockToBlockchain(Block block) {
+        LOGGER.info(String.format("Adding block %s to blockchain.", block.getHash()));
+        blockchain.add(block);
     }
 }

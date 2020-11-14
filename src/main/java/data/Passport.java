@@ -6,7 +6,7 @@ import data.components.Visa;
 import lombok.Data;
 
 import java.util.Date;
-import java.util.List;
+import java.util.LinkedList;
 
 @Data
 public class Passport {
@@ -17,6 +17,16 @@ public class Passport {
     private String series;
     private String documentNumber;
     private String issuingCountry;
-    private List<Visa> listOfVisas;
-    private List<CountriesPair> listOfBorderCrossing;
+    private LinkedList<Visa> listOfVisas;
+    private LinkedList<CountriesPair> listOfBorderCrossing;
+    private boolean valid;
+
+    public Passport() {
+        listOfVisas = new LinkedList<>();
+        listOfBorderCrossing = new LinkedList<>();
+    }
+
+    public void invalidate() {
+        valid = false;
+    }
 }

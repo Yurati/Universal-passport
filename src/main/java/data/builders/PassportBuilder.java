@@ -65,6 +65,7 @@ public final class PassportBuilder {
         passport.setSeries(series);
         passport.setDocumentNumber(documentNumber);
         passport.setIssuingCountry(issuingCountry);
+        passport.setValid(true);
         return passport;
     }
 }

@@ -4,7 +4,10 @@ import lombok.Getter;
 import transactions.Transaction;
 import utils.BlockUtils;
 
+import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
@@ -14,35 +17,38 @@ public class Block {
     private String hash;
     private final String previousHash;
     public List<Transaction> transactions;
-    private final long timeStamp;
+    private final long timestamp;
     private int nonce;
 
     public Block(String previousHash, List<Transaction> transactions) {
         this.previousHash = previousHash;
-        this.timeStamp = System.currentTimeMillis();
+        this.timestamp = new Date().getTime();
         this.transactions = transactions;
+        nonce = 0;
     }
 
     public void mineBlock(int prefix) {
+        LOGGER.info("Calculating hash for block");
         String prefixString = new String(new char[prefix]).replace('\0', '0');
-        while (!hash.substring(0, prefix).equals(prefixString)) {
+        do {
             nonce++;
             hash = calculateBlockHash();
-        }
+        } while (!hash.substring(0, prefix).equals(prefixString));
         LOGGER.info(String.format("Block with hash %s mined!", hash));
     }
 
-    public List<Transaction> getTransactionsForPassport(String id) {
+    public Optional<Transaction> getLastTransactionForPassport(String id) {
         return transactions
                 .stream()
-                .filter(transaction -> transaction.getTransactionId().equals(id))
-                .collect(Collectors.toList());
+                .filter(transaction -> transaction.getPassport().getId().equals(id))
+                .collect(Collectors.toList())
+                .stream()
+                .max(Comparator.comparing(Transaction::getTimestamp));
     }
 
     private String calculateBlockHash() {
-        LOGGER.info("Calculating hash for block");
         String dataToHash = previousHash
-                + timeStamp
+                + timestamp
                 + nonce
                 + BlockUtils.getMerkleRoot(transactions);
         return BlockUtils.applySha256(dataToHash);
