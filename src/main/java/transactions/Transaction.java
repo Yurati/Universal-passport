@@ -1,56 +1,53 @@
 package transactions;
 
+import data.Passport;
 import lombok.Getter;
-import operations.Operation;
 import utils.BlockUtils;
 import utils.KeyUtils;
 
 import java.security.PrivateKey;
 import java.security.PublicKey;
+import java.util.Date;
 import java.util.logging.Logger;
 
 public class Transaction {
     private static final Logger LOGGER = Logger.getLogger("Transaction");
     @Getter
-    private String transactionId;
+    private final String transactionId;
     private final PublicKey sender;
-    private final PublicKey recipient;
-    private final Operation operation;
+    @Getter
+    private final Passport passport;
     private byte[] signature;
+    @Getter
+    private final long timestamp;
 
     private static long sequence = 0; // a rough count of how many transactions have been generated.
 
-    public Transaction(PublicKey from, PublicKey to, Operation operation) {
+    public Transaction(PublicKey from, Passport passport) {
         this.sender = from;
-        this.recipient = to;
-        this.operation = operation;
+        this.passport = passport;
         transactionId = calculateHash();
+        timestamp = new Date().getTime();
     }
 
     public void generateSignature(PrivateKey privateKey) {
-        String data = KeyUtils.getStringFromKey(sender) + KeyUtils.getStringFromKey(recipient) + operation;
+        LOGGER.info("Generating signature.");
+        String data = KeyUtils.getStringFromKey(sender) + passport.getId() + passport;
         signature = KeyUtils.applyECDSASig(privateKey, data);
     }
 
     public boolean verifySignature() {
-        String data = KeyUtils.getStringFromKey(sender) + KeyUtils.getStringFromKey(recipient) + operation;
+        LOGGER.info("Verifying signature.");
+        String data = KeyUtils.getStringFromKey(sender) + passport.getId() + passport;
         return KeyUtils.verifyECDSASig(sender, data, signature);
-    }
-
-    public void processTransaction() {
-        if (!verifySignature()) {
-            LOGGER.severe("Signature failed to verify!");
-        }
-        operation.execute();
     }
 
     private String calculateHash() {
         sequence++;
         return BlockUtils.applySha256(
                 KeyUtils.getStringFromKey(sender) +
-                        KeyUtils.getStringFromKey(recipient) +
-                        operation + sequence
+                        passport.getId() +
+                        passport + sequence
         );
     }
-
 }

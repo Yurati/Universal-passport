@@ -1,24 +1,26 @@
 package chain;
 
+import data.Passport;
 import lombok.Getter;
 import transactions.Transaction;
 
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 import java.util.logging.Logger;
 
 public class Blockchain {
     private static final Logger LOGGER = Logger.getLogger("Blockchain");
+    private static final int DIFFICULTY = 3;
     @Getter
-    private List<Block> blockchain;
-    public static HashMap<String, Transaction> transactionHashMap = new HashMap<>();
+    private LinkedList<Block> blockchain;
 
     public Blockchain() {
-        blockchain = new ArrayList<>();
+        blockchain = new LinkedList<>();
     }
 
-    public Boolean isChainValid() {
+    public boolean isChainValid() {
         Block currentBlock;
         Block previousBlock;
         LOGGER.info("Validating blockchain.");
@@ -32,5 +34,34 @@ public class Blockchain {
         }
         LOGGER.info("Chain is valid.");
         return true;
+    }
+
+    public Passport getPassport(String id) {
+        Iterator<Block> lit = blockchain.descendingIterator();
+        while (lit.hasNext()) {
+            Block block = lit.next();
+            Optional<Transaction> transaction = block.getLastTransactionForPassport(id);
+            if (transaction.isPresent())
+                return transaction.get().getPassport();
+        }
+        return null;
+    }
+
+    public void mineBlock(List<Transaction> transactionList) {
+        Block block;
+        if (blockchain.isEmpty()) {
+            block = new Block(null, transactionList);
+        } else {
+            String previousHash = blockchain.getLast().getHash();
+            block = new Block(previousHash, transactionList);
+        }
+        LOGGER.info("Mining block!");
+        block.mineBlock(DIFFICULTY);
+        addBlockToBlockchain(block);
+    }
+
+    private void addBlockToBlockchain(Block block) {
+        LOGGER.info(String.format("Adding block %s to blockchain.", block.getHash()));
+        blockchain.add(block);
     }
 }
