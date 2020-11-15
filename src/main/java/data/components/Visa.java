@@ -2,14 +2,14 @@ package data.components;
 
 import lombok.Data;
 
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.List;
 
 @Data
 public class Visa {
     private String id;
     private String issuingCountry;
-    private Date issueDate;
-    private Date expirationDate;
-    private List<String> openedCountries;
+    private LocalDate issueDate;
+    private LocalDate expirationDate;
+    private List<String> allowedCountries;
 }

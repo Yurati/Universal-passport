@@ -3,12 +3,12 @@ package data.builders;
 import data.components.Gender;
 import data.components.Person;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 public final class PersonBuilder {
     private String firstName;
     private String lastName;
-    private Date birthDate;
+    private LocalDate birthDate;
     private Gender gender;
     private String identityNumber;
 
@@ -29,7 +29,7 @@ public final class PersonBuilder {
         return this;
     }
 
-    public PersonBuilder withBirthDate(Date birthDate) {
+    public PersonBuilder withBirthDate(LocalDate birthDate) {
         this.birthDate = birthDate;
         return this;
     }
