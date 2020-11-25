@@ -1,4 +1,4 @@
-package common;
+package data.components;
 
 import lombok.Getter;
 

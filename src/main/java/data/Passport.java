@@ -1,6 +1,6 @@
 package data;
 
-import common.CountriesPair;
+import data.components.CountriesPair;
 import data.components.Person;
 import data.components.Visa;
 import lombok.Data;

@@ -1,7 +1,7 @@
 package data.builders;
 
-import common.CountriesPair;
 import data.Passport;
+import data.components.CountriesPair;
 import data.components.Person;
 import data.components.Visa;
 

@@ -47,7 +47,7 @@ public class Transaction {
         return BlockUtils.applySha256(
                 KeyUtils.getStringFromKey(sender) +
                         passport.getId() +
-                        passport + sequence
+                        timestamp + sequence
         );
     }
 }
