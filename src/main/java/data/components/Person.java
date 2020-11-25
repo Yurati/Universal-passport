@@ -5,7 +5,7 @@ import lombok.Data;
 import java.time.LocalDate;
 
 @Data
-public class Person {
+public class Person implements Cloneable {
     private String firstName;
     private String lastName;
     private LocalDate birthDate;
@@ -13,4 +13,8 @@ public class Person {
     private Gender gender;
     private String identityNumber;
 
+    @Override
+    public Object clone() throws CloneNotSupportedException {
+        return super.clone();
+    }
 }

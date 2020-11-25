@@ -4,7 +4,6 @@ import chain.Blockchain;
 import data.Passport;
 import data.components.CountriesPair;
 import data.rights.AccessRight;
-import transactions.Transaction;
 
 public class BorderGuardAgent extends Agent {
     private final CountriesPair countriesPair;
@@ -15,9 +14,9 @@ public class BorderGuardAgent extends Agent {
         countriesPair = new CountriesPair(from, to);
     }
 
-    public Transaction createAddCountriesPairTransaction(String passportId) {
+    public void createAddCountriesPairTransaction(String passportId) {
         Passport passport = blockchain.getPassport(passportId);
         passport.getListOfBorderCrossings().add(countriesPair);
-        return createNewTransaction(passport);
+        createNewTransaction(passport);
     }
 }

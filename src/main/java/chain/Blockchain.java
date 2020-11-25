@@ -41,19 +41,25 @@ public class Blockchain {
         while (lit.hasNext()) {
             Block block = lit.next();
             Optional<Transaction> transaction = block.getLastTransactionForPassport(id);
-            if (transaction.isPresent())
-                return transaction.get().getPassport();
+            if (transaction.isPresent()) {
+                try {
+                    return (Passport) transaction.get().getPassport().clone();
+                } catch (CloneNotSupportedException e) {
+                    throw new RuntimeException("Cannot clone passport.");
+                }
+            }
         }
         return null;
     }
 
     public void mineBlock(List<Transaction> transactionList) {
+        List<Transaction> transactionsToAdd = List.copyOf(transactionList);
         Block block;
         if (blockchain.isEmpty()) {
-            block = new Block(null, transactionList);
+            block = new Block(null, transactionsToAdd);
         } else {
             String previousHash = blockchain.getLast().getHash();
-            block = new Block(previousHash, transactionList);
+            block = new Block(previousHash, transactionsToAdd);
         }
         LOGGER.info("Mining block!");
         block.mineBlock(DIFFICULTY);

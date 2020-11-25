@@ -69,6 +69,7 @@ public class DataProvider {
                 .withExpirationDate(DEFAULT_EXPIRATION_DATE)
                 .withIssueDate(DEFAULT_ISSUE_DATE)
                 .withIssuingCountry("PL")
+                .withListOfBorderCrossings(new LinkedList<>())
                 .withValid(true);
     }
 

@@ -4,7 +4,6 @@ import chain.Blockchain;
 import data.Passport;
 import data.components.Visa;
 import data.rights.AccessRight;
-import transactions.Transaction;
 
 import java.util.LinkedList;
 
@@ -21,13 +20,13 @@ public class EmbassyAgent extends Agent {
         visas.add(visa);
     }
 
-    public Transaction createVisaTransaction(Visa visa, String passportId) {
+    public void createVisaTransaction(Visa visa, String passportId) {
         Passport passport = blockchain.getPassport(passportId);
         if (visas.contains(visa)) {
             passport.getListOfVisas().add(visa);
         } else {
             throw new RuntimeException("Embassy does not have right to add this visa.");
         }
-        return createNewTransaction(passport);
+        createNewTransaction(passport);
     }
 }

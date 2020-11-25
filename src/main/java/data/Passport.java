@@ -9,7 +9,7 @@ import java.time.LocalDate;
 import java.util.LinkedList;
 
 @Data
-public class Passport {
+public class Passport implements Cloneable {
     private String id;
     private Person person;
     private LocalDate issueDate;
@@ -21,12 +21,16 @@ public class Passport {
     private LinkedList<CountriesPair> listOfBorderCrossings;
     private boolean valid;
 
-    public Passport() {
-        listOfVisas = new LinkedList<>();
-        listOfBorderCrossings = new LinkedList<>();
-    }
-
     public void invalidate() {
         valid = false;
+    }
+
+    @Override
+    public Object clone() throws CloneNotSupportedException {
+        Passport passport = (Passport) super.clone();
+        passport.person = (Person) person.clone();
+        passport.listOfVisas = new LinkedList<>(listOfVisas);
+        passport.listOfBorderCrossings = new LinkedList<>(listOfBorderCrossings);
+        return passport;
     }
 }
