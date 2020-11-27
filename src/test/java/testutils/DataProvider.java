@@ -1,15 +1,15 @@
 package testutils;
 
-import data.Passport;
-import data.builders.PassportBuilder;
-import data.builders.PersonBuilder;
-import data.builders.VisaBuilder;
-import data.components.Gender;
-import data.components.Person;
-import data.components.Visa;
+import blockchain.data.Passport;
+import blockchain.data.builders.PassportBuilder;
+import blockchain.data.builders.PersonBuilder;
+import blockchain.data.builders.VisaBuilder;
+import blockchain.data.components.Gender;
+import blockchain.data.components.Person;
+import blockchain.data.components.Visa;
+import blockchain.transactions.Transaction;
+import blockchain.utils.KeyUtils;
 import lombok.Getter;
-import transactions.Transaction;
-import utils.KeyUtils;
 
 import java.security.KeyPair;
 import java.security.PrivateKey;
