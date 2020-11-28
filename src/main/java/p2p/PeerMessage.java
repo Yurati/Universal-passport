@@ -9,14 +9,13 @@ public class PeerMessage {
     private byte[] data;
 
     public PeerMessage(byte[] type, byte[] data) {
-        this.type = (byte[]) type.clone();
-        this.data = (byte[]) data.clone();
+        this.type = type.clone();
+        this.data = data.clone();
     }
 
     public PeerMessage(String type, String data) {
         this(type.getBytes(), data.getBytes());
     }
-
 
     public PeerMessage(String type, byte[] data) {
         this(type.getBytes(), data);
@@ -61,7 +60,7 @@ public class PeerMessage {
     }
 
     public byte[] getMsgTypeBytes() {
-        return (byte[]) data.clone();
+        return data.clone();
     }
 
     public String getMsgData() {
@@ -69,7 +68,7 @@ public class PeerMessage {
     }
 
     public byte[] getMsgDataBytes() {
-        return (byte[]) data.clone();
+        return data.clone();
     }
 
     public byte[] toBytes() {

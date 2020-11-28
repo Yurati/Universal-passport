@@ -1,5 +1,7 @@
 package p2p;
 
+import blockchain.chain.Blockchain;
+import lombok.Getter;
 import p2p.handlers.BaseHandler;
 import p2p.socket.SimpleSocket;
 import p2p.socket.SocketInterface;
@@ -17,13 +19,14 @@ import java.util.List;
 import java.util.Set;
 
 public class Node {
-
     private static final int SOCKET_TIMEOUT = 2000; // milliseconds
     private PeerInfo peerInfo;
     private int maxPeers;
     private Hashtable<String, PeerInfo> peers;
     private Hashtable<String, BaseHandler> handlers;
     private RouterInterface router;
+    @Getter
+    private Blockchain blockchain;
     private boolean shutdown;
 
     public Node(int maxPeers, PeerInfo info) {

@@ -66,7 +66,7 @@ public class Blockchain {
         addBlockToBlockchain(block);
     }
 
-    private void addBlockToBlockchain(Block block) {
+    public void addBlockToBlockchain(Block block) {
         LOGGER.info(String.format("Adding block %s to blockchain.", block.getHash()));
         blockchain.add(block);
     }

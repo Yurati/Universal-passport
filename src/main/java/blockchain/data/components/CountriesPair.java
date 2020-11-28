@@ -2,10 +2,11 @@ package blockchain.data.components;
 
 import lombok.Getter;
 
+import java.io.Serializable;
 import java.util.Date;
 
 @Getter
-public class CountriesPair implements Cloneable {
+public class CountriesPair implements Cloneable, Serializable {
     private String fromCountry;
     private String toCountry;
     private long timestamp;

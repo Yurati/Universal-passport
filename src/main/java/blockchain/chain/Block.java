@@ -4,6 +4,7 @@ import blockchain.transactions.Transaction;
 import blockchain.utils.BlockUtils;
 import lombok.Getter;
 
+import java.io.Serializable;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
@@ -12,7 +13,7 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 @Getter
-public class Block {
+public class Block implements Serializable {
     private static final Logger LOGGER = Logger.getLogger("Block");
     private String hash;
     private final String previousHash;

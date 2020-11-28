@@ -1,6 +1,5 @@
 package p2p.network;
 
-import blockchain.chain.Blockchain;
 import p2p.Node;
 import p2p.PeerInfo;
 import p2p.handlers.AddBaseHandler;
@@ -15,8 +14,6 @@ public class BlockchainNode extends Node {
     public static final String NEW_BLOCK = "NEW";
     public static final String REPLY = "RPL";
     public static final String ERROR = "ERR";
-
-    private Blockchain blockchain;
 
     public BlockchainNode(int maxPeers, PeerInfo peerInfo) {
         super(maxPeers, peerInfo);

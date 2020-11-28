@@ -6,7 +6,7 @@ import p2p.PeerConnection;
 import p2p.PeerMessage;
 
 public abstract class BaseHandler {
-    private Node node;
+    protected Node node;
 
     public BaseHandler(Node node) {
         this.node = node;

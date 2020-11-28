@@ -5,12 +5,13 @@ import blockchain.utils.BlockUtils;
 import blockchain.utils.KeyUtils;
 import lombok.Getter;
 
+import java.io.Serializable;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.util.Date;
 import java.util.logging.Logger;
 
-public class Transaction {
+public class Transaction implements Serializable {
     private static final Logger LOGGER = Logger.getLogger("Transaction");
     @Getter
     private final String transactionId;

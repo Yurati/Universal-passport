@@ -2,10 +2,11 @@ package blockchain.data.components;
 
 import lombok.Data;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 
 @Data
-public class Person implements Cloneable {
+public class Person implements Cloneable, Serializable {
     private String firstName;
     private String lastName;
     private LocalDate birthDate;

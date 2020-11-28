@@ -5,11 +5,12 @@ import blockchain.data.components.Person;
 import blockchain.data.components.Visa;
 import lombok.Data;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.LinkedList;
 
 @Data
-public class Passport implements Cloneable {
+public class Passport implements Cloneable, Serializable {
     private String id;
     private Person person;
     private LocalDate issueDate;
