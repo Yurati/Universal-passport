@@ -1,8 +1,12 @@
 package p2p;
 
+import p2p.network.BlockchainNode;
 import p2p.socket.SocketInterface;
+import p2p.util.Converter;
+import p2p.util.LoggerUtil;
 
 import java.io.IOException;
+import java.util.logging.Logger;
 
 public class PeerMessage {
     private byte[] type;
@@ -56,7 +60,7 @@ public class PeerMessage {
     }
 
     public String getMsgType() {
-        return new String(type);
+        return (new String(type)).trim();
     }
 
     public byte[] getMsgTypeBytes() {
@@ -75,6 +79,13 @@ public class PeerMessage {
         byte[] bytes = new byte[4 + 4 + data.length];
         byte[] lenbytes = intToByteArray(data.length);
 
+        if (type.length != 4) {
+            byte[] tmp = new byte[4];
+            for (int i = 0; i < type.length; i++) {
+                tmp[i] = type[i];
+            }
+            type = tmp;
+        }
         System.arraycopy(type, 0, bytes, 0, 4);
         System.arraycopy(lenbytes, 0, bytes, 4, 4);
         System.arraycopy(data, 0, bytes, 8, data.length);

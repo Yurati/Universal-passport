@@ -1,18 +1,16 @@
 package p2p;
 
+import blockchain.chain.Block;
 import blockchain.chain.Blockchain;
 import lombok.Getter;
 import p2p.handlers.BaseHandler;
 import p2p.socket.SimpleSocket;
 import p2p.socket.SocketInterface;
+import p2p.util.Converter;
 import p2p.util.LoggerUtil;
 
 import java.io.IOException;
-import java.net.ServerSocket;
-import java.net.Socket;
-import java.net.SocketException;
-import java.net.SocketTimeoutException;
-import java.net.UnknownHostException;
+import java.net.*;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
@@ -34,6 +32,8 @@ public class Node {
             info.setHost(getHostname());
         if (info.getId() == null)
             info.setId(info.getHost() + ":" + info.getPort());
+
+        blockchain = new Blockchain();
 
         this.peerInfo = info;
         this.maxPeers = maxPeers;
@@ -74,7 +74,7 @@ public class Node {
 
     public ServerSocket makeServerSocket(int port, int backlog)
             throws IOException {
-        ServerSocket s = new ServerSocket(port, backlog);
+        ServerSocket s = new ServerSocket(port, backlog, InetAddress.getByName("localhost"));
         s.setReuseAddress(true);
         return s;
     }
@@ -119,19 +119,46 @@ public class Node {
         return msgreply;
     }
 
+    public List<PeerMessage> connectAndSendBlock(PeerInfo pd, String msgtype,
+                                                 Block block, boolean waitreply) {
+        List<PeerMessage> msgreply = new ArrayList<>();
+        try {
+            PeerConnection peerConnection = new PeerConnection(pd);
+            PeerMessage toSend = new PeerMessage(msgtype, Converter.serialize(block));
+            peerConnection.sendData(toSend);
+            LoggerUtil.getLogger().info("Sent " + toSend + "/" + peerConnection);
+
+            if (waitreply) {
+                PeerMessage onereply = peerConnection.recvData();
+                while (onereply != null) {
+                    msgreply.add(onereply);
+                    LoggerUtil.getLogger().info("Got reply " + onereply);
+                    onereply = peerConnection.recvData();
+                }
+            }
+
+            peerConnection.close();
+        } catch (IOException e) {
+            LoggerUtil.getLogger().warning("Error: " + e + "/"
+                    + pd + "/" + msgtype);
+        }
+        return msgreply;
+    }
+
     public void mainLoop() {
         try {
             ServerSocket s = makeServerSocket(peerInfo.getPort());
             s.setSoTimeout(SOCKET_TIMEOUT);
 
             while (!shutdown) {
-                LoggerUtil.getLogger().fine("Listening...");
+                LoggerUtil.getLogger().info("Listening...");
                 try {
                     Socket clientsock = s.accept();
                     clientsock.setSoTimeout(0);
 
                     PeerHandler ph = new PeerHandler(clientsock);
                     ph.start();
+                    LoggerUtil.getLogger().info("Successfully listened");
                 } catch (SocketTimeoutException e) {
                     LoggerUtil.getLogger().fine("" + e);
                     continue;
@@ -218,13 +245,13 @@ public class Node {
             PeerConnection peerConnection = new PeerConnection(null, socket);
             PeerMessage peerMessage = peerConnection.recvData();
             if (!handlers.containsKey(peerMessage.getMsgType())) {
-                LoggerUtil.getLogger().fine("Not handled: " + peerMessage);
+                LoggerUtil.getLogger().info("Not handled: " + peerMessage + "MSG_TYPE: " + peerMessage.getMsgType());
             } else {
-                LoggerUtil.getLogger().finer("Handling: " + peerMessage);
+                LoggerUtil.getLogger().info("Handling: " + peerMessage);
                 handlers.get(peerMessage.getMsgType()).handleMessage(peerConnection,
                         peerMessage);
             }
-            LoggerUtil.getLogger().fine("Disconnecting incoming: " + peerConnection);
+            LoggerUtil.getLogger().info("Disconnecting incoming: " + peerConnection);
             peerConnection.close();
         }
     }
