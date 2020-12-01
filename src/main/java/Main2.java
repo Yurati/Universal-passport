@@ -1,4 +1,4 @@
-import blockchain.chain.Block;
+import blockchain.exceptions.TransactionsSizeException;
 import p2p.PeerInfo;
 import p2p.network.BlockchainNode;
 
@@ -15,7 +15,12 @@ public class Main2 {
             }
         }).start();
         PeerInfo peerInfo2 = new PeerInfo(9090);
-        blockchainNode.getBlockchain().mineBlock(new LinkedList<>());
-        blockchainNode.connectAndSendBlock(peerInfo2, BlockchainNode.NEW_BLOCK, blockchainNode.getBlockchain().getBlockchain().get(blockchainNode.getBlockchain().getBlockchain().size() - 1), true);
+        try {
+            blockchainNode.getBlockchain().mineBlock(new LinkedList<>());
+        } catch (TransactionsSizeException e) {
+            e.printStackTrace();
+        }
+        blockchainNode.connectAndSendBlock(peerInfo2, BlockchainNode.NEW_BLOCK,
+                blockchainNode.getBlockchain().getBlockchain().get(blockchainNode.getBlockchain().getBlockchain().size() - 1), true);
     }
 }

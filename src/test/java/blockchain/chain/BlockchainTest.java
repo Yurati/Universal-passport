@@ -1,6 +1,7 @@
 package blockchain.chain;
 
 import blockchain.data.Passport;
+import blockchain.exceptions.TransactionsSizeException;
 import blockchain.transactions.Transaction;
 import org.junit.jupiter.api.Test;
 import testutils.ParentTest;
@@ -24,7 +25,7 @@ class BlockchainTest extends ParentTest {
     }
 
     @Test
-    void mineBlockTest() {
+    void mineBlockTest() throws TransactionsSizeException {
         List<Transaction> transactionList = new ArrayList<>();
         transactionList.add(dataProvider.getDefaultTransaction());
         int blockchainOldSize = blockchain.getBlockchain().size();

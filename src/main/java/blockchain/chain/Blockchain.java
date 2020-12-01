@@ -1,6 +1,7 @@
 package blockchain.chain;
 
 import blockchain.data.Passport;
+import blockchain.exceptions.TransactionsSizeException;
 import blockchain.transactions.Transaction;
 import lombok.Getter;
 
@@ -13,6 +14,7 @@ import java.util.logging.Logger;
 public class Blockchain {
     private static final Logger LOGGER = Logger.getLogger("Blockchain");
     private static final int DIFFICULTY = 3;
+    private static final int MAX_TRANSACTIONS_IN_BLOCK = 100;
     @Getter
     private LinkedList<Block> blockchain;
 
@@ -52,7 +54,8 @@ public class Blockchain {
         return null;
     }
 
-    public void mineBlock(List<Transaction> transactionList) {
+    public void mineBlock(List<Transaction> transactionList) throws TransactionsSizeException {
+        checkTransactionsLimit(transactionList);
         List<Transaction> transactionsToAdd = List.copyOf(transactionList);
         Block block;
         if (blockchain.isEmpty()) {
@@ -66,8 +69,16 @@ public class Blockchain {
         addBlockToBlockchain(block);
     }
 
-    public void addBlockToBlockchain(Block block) {
+    public void addBlockToBlockchain(Block block) throws TransactionsSizeException {
+        checkTransactionsLimit(block.getTransactions());
         LOGGER.info(String.format("Adding block %s to blockchain.", block.getHash()));
         blockchain.add(block);
+    }
+
+    private void checkTransactionsLimit(List<Transaction> transactions) throws TransactionsSizeException {
+        if (transactions.size() > MAX_TRANSACTIONS_IN_BLOCK) {
+            throw new TransactionsSizeException("List contains too many transactions! Threshold is: "
+                    + MAX_TRANSACTIONS_IN_BLOCK);
+        }
     }
 }

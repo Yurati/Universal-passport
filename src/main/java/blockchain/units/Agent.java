@@ -3,6 +3,7 @@ package blockchain.units;
 import blockchain.chain.Blockchain;
 import blockchain.data.Passport;
 import blockchain.data.rights.AccessRight;
+import blockchain.exceptions.TransactionsSizeException;
 import blockchain.transactions.Transaction;
 import blockchain.utils.KeyUtils;
 import lombok.Getter;
@@ -39,7 +40,7 @@ public abstract class Agent {
         transactionLinkedList.add(transaction);
     }
 
-    protected void addTransactionsToBlockchain() {
+    protected void addTransactionsToBlockchain() throws TransactionsSizeException {
         blockchain.mineBlock(transactionLinkedList);
         transactionLinkedList.clear();
     }

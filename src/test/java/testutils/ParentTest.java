@@ -1,13 +1,14 @@
 package testutils;
 
 import blockchain.chain.Blockchain;
+import blockchain.exceptions.TransactionsSizeException;
 import blockchain.transactions.Transaction;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.junit.jupiter.api.BeforeAll;
 
 import java.security.Security;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class ParentTest {
@@ -32,7 +33,11 @@ public class ParentTest {
                 dataProvider.getPassportWithVisaData());
 
         transactionList.add(transactionForSecondBlock);
-        blockchain.mineBlock(transactionList);
-        blockchain.mineBlock(Arrays.asList(transactionForSecondBlock));
+        try {
+            blockchain.mineBlock(transactionList);
+            blockchain.mineBlock(Collections.singletonList(transactionForSecondBlock));
+        } catch (TransactionsSizeException e) {
+            e.printStackTrace();
+        }
     }
 }
