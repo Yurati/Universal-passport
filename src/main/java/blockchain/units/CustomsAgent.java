@@ -2,15 +2,16 @@ package blockchain.units;
 
 import blockchain.chain.Blockchain;
 import blockchain.data.Passport;
+import p2p.PeerInfo;
 
 public class CustomsAgent extends Agent {
 
-    public CustomsAgent(Blockchain blockchain) {
-        super(blockchain);
+    public CustomsAgent(int maxPeers, PeerInfo peerInfo) {
+        super(maxPeers, peerInfo);
     }
 
     public boolean isPassportValid(String id) {
-        Passport passport = blockchain.getPassport(id);
+        Passport passport = getBlockchain().getPassport(id);
         return passport.isValid();
     }
 }

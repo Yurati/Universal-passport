@@ -3,6 +3,7 @@ package p2p;
 import blockchain.chain.Block;
 import blockchain.chain.Blockchain;
 import lombok.Getter;
+import lombok.Setter;
 import p2p.handlers.BaseHandler;
 import p2p.socket.SimpleSocket;
 import p2p.socket.SocketInterface;

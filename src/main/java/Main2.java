@@ -1,21 +1,23 @@
 import blockchain.chain.Block;
+import blockchain.units.CustomsAgent;
 import p2p.PeerInfo;
-import p2p.network.BlockchainNode;
+import p2p.util.Const;
 
+import java.beans.Customizer;
 import java.util.LinkedList;
 
 public class Main2 {
     public static void main(String[] args) {
         PeerInfo peerInfo = new PeerInfo(9091);
-        BlockchainNode blockchainNode = new BlockchainNode(10, peerInfo);
+        CustomsAgent customsAgent = new CustomsAgent(10, peerInfo);
         new Thread(new Runnable() {
             @Override
             public void run() {
-                blockchainNode.mainLoop();
+                customsAgent.mainLoop();
             }
         }).start();
         PeerInfo peerInfo2 = new PeerInfo(9090);
-        blockchainNode.getBlockchain().mineBlock(new LinkedList<>());
-        blockchainNode.connectAndSendBlock(peerInfo2, BlockchainNode.NEW_BLOCK, blockchainNode.getBlockchain().getBlockchain().get(blockchainNode.getBlockchain().getBlockchain().size() - 1), true);
+        customsAgent.getBlockchain().mineBlock(new LinkedList<>());
+        customsAgent.connectAndSendBlock(peerInfo2, Const.NEW_BLOCK, customsAgent.getBlockchain().getBlockchain().get(customsAgent.getBlockchain().getBlockchain().size() - 1), true);
     }
 }

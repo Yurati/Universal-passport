@@ -4,14 +4,15 @@ import blockchain.chain.Blockchain;
 import blockchain.data.Passport;
 import blockchain.data.components.Visa;
 import blockchain.data.rights.AccessRight;
+import p2p.PeerInfo;
 
 import java.util.LinkedList;
 
 public class EmbassyAgent extends Agent {
     public LinkedList<Visa> visas;
 
-    public EmbassyAgent(Blockchain blockchain) {
-        super(blockchain);
+    public EmbassyAgent(int maxPeers, PeerInfo peerInfo) {
+        super(maxPeers, peerInfo);
         accessRightHashSet.add(AccessRight.VISA);
         visas = new LinkedList<>();
     }
@@ -21,7 +22,7 @@ public class EmbassyAgent extends Agent {
     }
 
     public void createVisaTransaction(Visa visa, String passportId) {
-        Passport passport = blockchain.getPassport(passportId);
+        Passport passport = getBlockchain().getPassport(passportId);
         if (visas.contains(visa)) {
             passport.getListOfVisas().add(visa);
         } else {
