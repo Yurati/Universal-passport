@@ -1,9 +1,12 @@
-package p2p;
+package p2p.units;
 
 import blockchain.chain.Block;
 import blockchain.chain.Blockchain;
 import lombok.Getter;
-import lombok.Setter;
+import p2p.PeerConnection;
+import p2p.PeerInfo;
+import p2p.PeerMessage;
+import p2p.RouterInterface;
 import p2p.handlers.BaseHandler;
 import p2p.socket.SimpleSocket;
 import p2p.socket.SocketInterface;
@@ -11,13 +14,18 @@ import p2p.util.Converter;
 import p2p.util.LoggerUtil;
 
 import java.io.IOException;
-import java.net.*;
+import java.net.InetAddress;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.net.SocketException;
+import java.net.SocketTimeoutException;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Set;
 
-public class Node {
+public abstract class Node {
     private static final int SOCKET_TIMEOUT = 2000; // milliseconds
     private PeerInfo peerInfo;
     private int maxPeers;

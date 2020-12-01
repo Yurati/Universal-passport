@@ -1,9 +1,7 @@
-import blockchain.chain.Block;
-import blockchain.units.CustomsAgent;
 import p2p.PeerInfo;
+import p2p.units.CustomsAgent;
 import p2p.util.Const;
 
-import java.beans.Customizer;
 import java.util.LinkedList;
 
 public class Main2 {

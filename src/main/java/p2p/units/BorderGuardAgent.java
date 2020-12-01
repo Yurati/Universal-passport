@@ -1,11 +1,11 @@
-package blockchain.units;
+package p2p.units;
 
 import blockchain.data.Passport;
 import blockchain.data.components.CountriesPair;
 import blockchain.data.rights.AccessRight;
 import p2p.PeerInfo;
 
-public class BorderGuardAgent extends Agent {
+public class BorderGuardAgent extends AgentWithNewBlockRights {
     private final CountriesPair countriesPair;
 
     public BorderGuardAgent(int maxPeers, PeerInfo peerInfo, String from, String to) {

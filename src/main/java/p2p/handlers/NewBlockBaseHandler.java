@@ -1,9 +1,9 @@
 package p2p.handlers;
 
 import blockchain.chain.Block;
-import p2p.Node;
 import p2p.PeerConnection;
 import p2p.PeerMessage;
+import p2p.units.Node;
 import p2p.util.Converter;
 
 import java.io.IOException;

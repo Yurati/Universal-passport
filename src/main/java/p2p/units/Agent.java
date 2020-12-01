@@ -1,15 +1,11 @@
-package blockchain.units;
+package p2p.units;
 
-import blockchain.chain.Blockchain;
-import blockchain.data.Passport;
 import blockchain.data.rights.AccessRight;
 import blockchain.transactions.Transaction;
 import blockchain.utils.KeyUtils;
 import lombok.Getter;
-import p2p.Node;
 import p2p.PeerInfo;
 import p2p.handlers.AddBaseHandler;
-import p2p.handlers.NewBlockBaseHandler;
 import p2p.handlers.QuitBaseHandler;
 import p2p.handlers.ResponseBaseHandler;
 import p2p.util.Const;
@@ -35,7 +31,6 @@ public abstract class Agent extends Node {
         addRouter(new Router(this));
         addHandler(Const.QUIT, new QuitBaseHandler(this));
         addHandler(Const.ADD_PEAR, new AddBaseHandler(this));
-        addHandler(Const.NEW_BLOCK, new NewBlockBaseHandler(this));
         addHandler(Const.REPLY, new ResponseBaseHandler(this));
 
         accessRightHashSet = new HashSet<>();
@@ -44,12 +39,6 @@ public abstract class Agent extends Node {
         KeyPair keyPair = KeyUtils.generateKeyPair();
         publicKey = keyPair.getPublic();
         privateKey = keyPair.getPrivate();
-    }
-
-    protected void createNewTransaction(Passport passport) {
-        Transaction transaction = new Transaction(publicKey, passport);
-        transaction.generateSignature(privateKey);
-        transactionLinkedList.add(transaction);
     }
 
     protected void addTransactionsToBlockchain() {

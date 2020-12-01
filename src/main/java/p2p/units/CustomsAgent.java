@@ -1,6 +1,5 @@
-package blockchain.units;
+package p2p.units;
 
-import blockchain.chain.Blockchain;
 import blockchain.data.Passport;
 import p2p.PeerInfo;
 

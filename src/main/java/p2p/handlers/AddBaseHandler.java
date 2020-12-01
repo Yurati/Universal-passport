@@ -1,11 +1,10 @@
 package p2p.handlers;
 
-import p2p.Node;
 import p2p.PeerConnection;
 import p2p.PeerInfo;
 import p2p.PeerMessage;
+import p2p.units.Node;
 import p2p.util.Converter;
-import p2p.util.LoggerUtil;
 
 import java.io.IOException;
 import java.util.logging.Logger;
