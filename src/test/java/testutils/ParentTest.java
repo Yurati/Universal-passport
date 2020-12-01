@@ -1,9 +1,9 @@
 package testutils;
 
-import chain.Blockchain;
+import blockchain.chain.Blockchain;
+import blockchain.transactions.Transaction;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.junit.jupiter.api.BeforeAll;
-import transactions.Transaction;
 
 import java.security.Security;
 import java.util.ArrayList;
