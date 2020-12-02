@@ -51,12 +51,8 @@ public abstract class Agent extends Node {
         privateKey = keyPair.getPrivate();
     }
 
-    protected void addTransactionsToBlockchain() {
-        try {
-            getBlockchain().mineBlock(transactionLinkedList);
-        } catch (TransactionsSizeException e) {
-            e.printStackTrace();
-        }
+    public void addTransactionsToBlockchain() throws TransactionsSizeException {
+        getBlockchain().mineBlock(transactionLinkedList);
         transactionLinkedList.clear();
     }
 

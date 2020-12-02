@@ -7,8 +7,10 @@ import p2p.PeerInfo;
 import p2p.PeerMessage;
 import p2p.RouterInterface;
 import p2p.handlers.BaseHandler;
+import p2p.handlers.NewBlockBaseHandler;
 import p2p.socket.SimpleSocket;
 import p2p.socket.SocketInterface;
+import p2p.util.Const;
 import p2p.util.LoggerUtil;
 
 import java.io.IOException;
@@ -48,6 +50,7 @@ public abstract class Node {
         this.router = null;
 
         this.shutdown = false;
+        addHandler(Const.NEW_BLOCK, new NewBlockBaseHandler(this));
     }
 
     public Node(int port) {
@@ -183,13 +186,10 @@ public abstract class Node {
 
             PeerConnection peerConnection = new PeerConnection(null, socket);
             PeerMessage peerMessage = peerConnection.recvData();
-            if (!handlers.containsKey(peerMessage.getMsgType())) {
-                LoggerUtil.getLogger().info("Not handled: " + peerMessage + "MSG_TYPE: " + peerMessage.getMsgType());
-            } else {
-                LoggerUtil.getLogger().info("Handling: " + peerMessage);
-                handlers.get(peerMessage.getMsgType()).handleMessage(peerConnection,
-                        peerMessage);
-            }
+            LoggerUtil.getLogger().info("Handling: " + peerMessage);
+            handlers
+                    .get(peerMessage.getMsgType())
+                    .handleMessage(peerConnection, peerMessage);
             LoggerUtil.getLogger().info("Disconnecting incoming: " + peerConnection);
             peerConnection.close();
         }
