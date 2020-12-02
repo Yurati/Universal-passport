@@ -1,6 +1,5 @@
 package p2p.units;
 
-import blockchain.chain.Block;
 import blockchain.chain.Blockchain;
 import lombok.Getter;
 import p2p.PeerConnection;
@@ -10,7 +9,6 @@ import p2p.RouterInterface;
 import p2p.handlers.BaseHandler;
 import p2p.socket.SimpleSocket;
 import p2p.socket.SocketInterface;
-import p2p.util.Converter;
 import p2p.util.LoggerUtil;
 
 import java.io.IOException;
@@ -20,9 +18,7 @@ import java.net.Socket;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
-import java.util.ArrayList;
 import java.util.Hashtable;
-import java.util.List;
 import java.util.Set;
 
 public abstract class Node {
@@ -31,7 +27,7 @@ public abstract class Node {
     private int maxPeers;
     private Hashtable<String, PeerInfo> peers;
     private Hashtable<String, BaseHandler> handlers;
-    private RouterInterface router;
+    protected RouterInterface router;
     @Getter
     private Blockchain blockchain;
     private boolean shutdown;
@@ -86,72 +82,6 @@ public abstract class Node {
         ServerSocket s = new ServerSocket(port, backlog, InetAddress.getByName("localhost"));
         s.setReuseAddress(true);
         return s;
-    }
-
-    public List<PeerMessage> sendToPeer(String peerid, String msgtype,
-                                        String msgdata, boolean waitreply) {
-        PeerInfo pd = null;
-        if (router != null)
-            pd = router.route(peerid);
-        if (pd == null) {
-            LoggerUtil.getLogger().severe(
-                    String.format("Unable to route %s to %s", msgtype, peerid));
-            return new ArrayList<>();
-        }
-
-        return connectAndSend(pd, msgtype, msgdata, waitreply);
-    }
-
-    public List<PeerMessage> connectAndSend(PeerInfo pd, String msgtype,
-                                            String msgdata, boolean waitreply) {
-        List<PeerMessage> msgreply = new ArrayList<>();
-        try {
-            PeerConnection peerConnection = new PeerConnection(pd);
-            PeerMessage toSend = new PeerMessage(msgtype, msgdata);
-            peerConnection.sendData(toSend);
-            LoggerUtil.getLogger().fine("Sent " + toSend + "/" + peerConnection);
-
-            if (waitreply) {
-                PeerMessage onereply = peerConnection.recvData();
-                while (onereply != null) {
-                    msgreply.add(onereply);
-                    LoggerUtil.getLogger().fine("Got reply " + onereply);
-                    onereply = peerConnection.recvData();
-                }
-            }
-
-            peerConnection.close();
-        } catch (IOException e) {
-            LoggerUtil.getLogger().warning("Error: " + e + "/"
-                    + pd + "/" + msgtype);
-        }
-        return msgreply;
-    }
-
-    public List<PeerMessage> connectAndSendBlock(PeerInfo pd, String msgtype,
-                                                 Block block, boolean waitreply) {
-        List<PeerMessage> msgreply = new ArrayList<>();
-        try {
-            PeerConnection peerConnection = new PeerConnection(pd);
-            PeerMessage toSend = new PeerMessage(msgtype, Converter.serialize(block));
-            peerConnection.sendData(toSend);
-            LoggerUtil.getLogger().info("Sent " + toSend + "/" + peerConnection);
-
-            if (waitreply) {
-                PeerMessage onereply = peerConnection.recvData();
-                while (onereply != null) {
-                    msgreply.add(onereply);
-                    LoggerUtil.getLogger().info("Got reply " + onereply);
-                    onereply = peerConnection.recvData();
-                }
-            }
-
-            peerConnection.close();
-        } catch (IOException e) {
-            LoggerUtil.getLogger().warning("Error: " + e + "/"
-                    + pd + "/" + msgtype);
-        }
-        return msgreply;
     }
 
     public void mainLoop() {
@@ -264,5 +194,4 @@ public abstract class Node {
             peerConnection.close();
         }
     }
-
 }

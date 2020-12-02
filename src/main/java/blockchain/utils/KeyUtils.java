@@ -1,11 +1,14 @@
 package blockchain.utils;
 
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
+
 import java.security.Key;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.SecureRandom;
+import java.security.Security;
 import java.security.Signature;
 import java.security.spec.ECGenParameterSpec;
 import java.util.Base64;
@@ -39,6 +42,7 @@ public class KeyUtils {
 
     public static KeyPair generateKeyPair() {
         try {
+            Security.addProvider(new BouncyCastleProvider());
             KeyPairGenerator keyGen = KeyPairGenerator.getInstance("ECDSA", "BC");
             SecureRandom random = SecureRandom.getInstance("SHA1PRNG");
             ECGenParameterSpec ecSpec = new ECGenParameterSpec("prime192v1");

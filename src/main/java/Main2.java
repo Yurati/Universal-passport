@@ -1,6 +1,7 @@
+import blockchain.exceptions.InvalidRightsException;
+import blockchain.exceptions.TransactionsSizeException;
 import p2p.PeerInfo;
 import p2p.units.CustomsAgent;
-import p2p.util.Const;
 
 import java.util.LinkedList;
 
@@ -15,7 +16,11 @@ public class Main2 {
             }
         }).start();
         PeerInfo peerInfo2 = new PeerInfo(9090);
-        customsAgent.getBlockchain().mineBlock(new LinkedList<>());
-        customsAgent.connectAndSendBlock(peerInfo2, Const.NEW_BLOCK, customsAgent.getBlockchain().getBlockchain().get(customsAgent.getBlockchain().getBlockchain().size() - 1), true);
+        try {
+            customsAgent.getBlockchain().mineBlock(new LinkedList<>());
+            customsAgent.connectAndSendBlock(peerInfo2, customsAgent.getBlockchain().getLastBlock(), true);
+        } catch (TransactionsSizeException | InvalidRightsException e) {
+            e.printStackTrace();
+        }
     }
 }

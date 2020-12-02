@@ -69,6 +69,10 @@ public class Blockchain {
         addBlockToBlockchain(block);
     }
 
+    public Block getLastBlock() {
+        return blockchain.getLast();
+    }
+
     public void addBlockToBlockchain(Block block) throws TransactionsSizeException {
         checkTransactionsLimit(block.getTransactions());
         LOGGER.info(String.format("Adding block %s to blockchain.", block.getHash()));
