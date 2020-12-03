@@ -57,6 +57,11 @@ public abstract class Node {
         this(0, new PeerInfo(port));
     }
 
+    //TODO: impl synchronization between agents
+    public void synchronizeBlockchain() {
+
+    }
+
     /*
      * Attempt to determine the name or IP address of the machine
      * this node is running on.
@@ -106,14 +111,12 @@ public abstract class Node {
                     continue;
                 }
             }
-
             s.close();
         } catch (SocketException e) {
             LoggerUtil.getLogger().severe("Stopping main loop (SocketExc): " + e);
         } catch (IOException e) {
             LoggerUtil.getLogger().severe("Stopping main loop (IOExc): " + e);
         }
-
         shutdown = true;
     }
 

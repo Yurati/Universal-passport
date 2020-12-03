@@ -19,9 +19,7 @@ public class QuitBaseHandler extends BaseHandler {
         try {
             peerInfo = (PeerInfo) Converter.deserialize(msg.getMsgDataBytes());
             node.removePeer(peerInfo.getId());
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (ClassNotFoundException e) {
+        } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
         }
     }

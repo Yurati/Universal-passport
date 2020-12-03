@@ -16,14 +16,13 @@ public class AddBaseHandler extends BaseHandler {
 
     @Override
     public void handleMessage(PeerConnection peerConnection, PeerMessage msg) {
-        Logger.getLogger("AddBaseHandler").info("Adding new block...");
+        Logger.getLogger("AddBaseHandler").info("Adding new peer...");
         PeerInfo peerInfo;
         try {
             peerInfo = (PeerInfo) Converter.deserialize(msg.getMsgDataBytes());
             node.addPeer(peerInfo);
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (ClassNotFoundException e) {
+            node.synchronizeBlockchain();
+        } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
         }
     }

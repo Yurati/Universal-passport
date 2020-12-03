@@ -56,14 +56,23 @@ public abstract class Agent extends Node {
         transactionLinkedList.clear();
     }
 
-    //TODO: impl synchronization between agents
-    public void synchronizeBlockchain() {
-
+    public List<PeerMessage> connectAndSendBlock(PeerInfo pd,
+                                                 Block block, boolean waitreply) throws InvalidRightsException {
+        String msgtype = Const.NEW_BLOCK;
+        try {
+            byte[] serializedBlock = Converter.serialize(block);
+            return connectAndSend(pd, msgtype, serializedBlock, waitreply);
+        } catch (IOException e) {
+            LoggerUtil.getLogger().warning("Error: " + e + "/"
+                    + pd + "/" + msgtype);
+        }
+        return null;
     }
 
     public List<PeerMessage> connectAndSend(PeerInfo pd, String msgtype,
-                                            String msgdata, boolean waitreply) throws InvalidRightsException {
+                                            byte[] msgdata, boolean waitreply) throws InvalidRightsException {
         List<PeerMessage> msgreply = new ArrayList<>();
+        validateRights(msgtype);
         try {
             PeerConnection peerConnection = new PeerConnection(pd);
             PeerMessage toSend = new PeerMessage(msgtype, msgdata);
@@ -87,36 +96,8 @@ public abstract class Agent extends Node {
         return msgreply;
     }
 
-    public List<PeerMessage> connectAndSendBlock(PeerInfo pd,
-                                                 Block block, boolean waitreply) throws InvalidRightsException {
-        String msgtype = Const.NEW_BLOCK;
-        validateRights(msgtype);
-        List<PeerMessage> msgreply = new ArrayList<>();
-        try {
-            PeerConnection peerConnection = new PeerConnection(pd);
-            PeerMessage toSend = new PeerMessage(msgtype, Converter.serialize(block));
-            peerConnection.sendData(toSend);
-            LoggerUtil.getLogger().info("Sent " + toSend + "/" + peerConnection);
-
-            if (waitreply) {
-                PeerMessage onereply = peerConnection.recvData();
-                while (onereply != null) {
-                    msgreply.add(onereply);
-                    LoggerUtil.getLogger().info("Got reply " + onereply);
-                    onereply = peerConnection.recvData();
-                }
-            }
-
-            peerConnection.close();
-        } catch (IOException e) {
-            LoggerUtil.getLogger().warning("Error: " + e + "/"
-                    + pd + "/" + msgtype);
-        }
-        return msgreply;
-    }
-
     public List<PeerMessage> sendToPeer(String peerid, String msgtype,
-                                        String msgdata, boolean waitreply) throws InvalidRightsException {
+                                        byte[] msgdata, boolean waitreply) throws InvalidRightsException {
         PeerInfo pd = null;
         if (router != null)
             pd = router.route(peerid);
@@ -125,7 +106,6 @@ public abstract class Agent extends Node {
                     String.format("Unable to route %s to %s", msgtype, peerid));
             return new ArrayList<>();
         }
-
         return connectAndSend(pd, msgtype, msgdata, waitreply);
     }
 
