@@ -3,10 +3,8 @@ package testutils;
 import blockchain.chain.Blockchain;
 import blockchain.exceptions.TransactionsSizeException;
 import blockchain.transactions.Transaction;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.junit.jupiter.api.BeforeAll;
 
-import java.security.Security;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -17,8 +15,6 @@ public class ParentTest {
 
     @BeforeAll
     public static void setUpParentTest() {
-        //TODO: add to config
-        Security.addProvider(new BouncyCastleProvider());
         blockchain = new Blockchain();
         dataProvider = new DataProvider();
         generateDataForBlockchain();

@@ -1,26 +1,23 @@
+import blockchain.exceptions.InvalidRightsException;
 import blockchain.exceptions.TransactionsSizeException;
 import p2p.PeerInfo;
-import p2p.network.BlockchainNode;
-
-import java.util.LinkedList;
+import p2p.units.ProvincialOfficeAgent;
+import p2p.util.DataProvider;
 
 public class Main2 {
     public static void main(String[] args) {
         PeerInfo peerInfo = new PeerInfo(9091);
-        BlockchainNode blockchainNode = new BlockchainNode(10, peerInfo);
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                blockchainNode.mainLoop();
-            }
-        }).start();
+        ProvincialOfficeAgent provincialOfficeAgent = new ProvincialOfficeAgent(10, peerInfo);
+        new Thread(provincialOfficeAgent::mainLoop).start();
         PeerInfo peerInfo2 = new PeerInfo(9090);
         try {
-            blockchainNode.getBlockchain().mineBlock(new LinkedList<>());
-        } catch (TransactionsSizeException e) {
+            DataProvider dataProvider = new DataProvider();
+            provincialOfficeAgent.createAddPassportTransaction(dataProvider.getPassportDefaultData());
+            provincialOfficeAgent.addTransactionsToBlockchain();
+            provincialOfficeAgent.connectAndSendBlock(peerInfo2, provincialOfficeAgent.getBlockchain().getLastBlock()
+                    , true);
+        } catch (TransactionsSizeException | InvalidRightsException e) {
             e.printStackTrace();
         }
-        blockchainNode.connectAndSendBlock(peerInfo2, BlockchainNode.NEW_BLOCK,
-                blockchainNode.getBlockchain().getBlockchain().get(blockchainNode.getBlockchain().getBlockchain().size() - 1), true);
     }
 }

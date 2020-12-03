@@ -1,12 +1,8 @@
 package p2p;
 
-import p2p.network.BlockchainNode;
 import p2p.socket.SocketInterface;
-import p2p.util.Converter;
-import p2p.util.LoggerUtil;
 
 import java.io.IOException;
-import java.util.logging.Logger;
 
 public class PeerMessage {
     private byte[] type;

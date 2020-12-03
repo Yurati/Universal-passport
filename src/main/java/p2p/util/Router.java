@@ -1,8 +1,8 @@
 package p2p.util;
 
-import p2p.Node;
 import p2p.PeerInfo;
 import p2p.RouterInterface;
+import p2p.units.Node;
 
 public class Router implements RouterInterface {
     private Node peer;

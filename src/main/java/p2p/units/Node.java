@@ -1,28 +1,35 @@
-package p2p;
+package p2p.units;
 
-import blockchain.chain.Block;
 import blockchain.chain.Blockchain;
 import lombok.Getter;
+import p2p.PeerConnection;
+import p2p.PeerInfo;
+import p2p.PeerMessage;
+import p2p.RouterInterface;
 import p2p.handlers.BaseHandler;
+import p2p.handlers.NewBlockBaseHandler;
 import p2p.socket.SimpleSocket;
 import p2p.socket.SocketInterface;
-import p2p.util.Converter;
+import p2p.util.Const;
 import p2p.util.LoggerUtil;
 
 import java.io.IOException;
-import java.net.*;
-import java.util.ArrayList;
+import java.net.InetAddress;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.net.SocketException;
+import java.net.SocketTimeoutException;
+import java.net.UnknownHostException;
 import java.util.Hashtable;
-import java.util.List;
 import java.util.Set;
 
-public class Node {
+public abstract class Node {
     private static final int SOCKET_TIMEOUT = 2000; // milliseconds
     private PeerInfo peerInfo;
     private int maxPeers;
     private Hashtable<String, PeerInfo> peers;
     private Hashtable<String, BaseHandler> handlers;
-    private RouterInterface router;
+    protected RouterInterface router;
     @Getter
     private Blockchain blockchain;
     private boolean shutdown;
@@ -43,10 +50,16 @@ public class Node {
         this.router = null;
 
         this.shutdown = false;
+        addHandler(Const.NEW_BLOCK, new NewBlockBaseHandler(this));
     }
 
     public Node(int port) {
         this(0, new PeerInfo(port));
+    }
+
+    //TODO: impl synchronization between agents
+    public void synchronizeBlockchain() {
+
     }
 
     /*
@@ -79,72 +92,6 @@ public class Node {
         return s;
     }
 
-    public List<PeerMessage> sendToPeer(String peerid, String msgtype,
-                                        String msgdata, boolean waitreply) {
-        PeerInfo pd = null;
-        if (router != null)
-            pd = router.route(peerid);
-        if (pd == null) {
-            LoggerUtil.getLogger().severe(
-                    String.format("Unable to route %s to %s", msgtype, peerid));
-            return new ArrayList<>();
-        }
-
-        return connectAndSend(pd, msgtype, msgdata, waitreply);
-    }
-
-    public List<PeerMessage> connectAndSend(PeerInfo pd, String msgtype,
-                                            String msgdata, boolean waitreply) {
-        List<PeerMessage> msgreply = new ArrayList<>();
-        try {
-            PeerConnection peerConnection = new PeerConnection(pd);
-            PeerMessage toSend = new PeerMessage(msgtype, msgdata);
-            peerConnection.sendData(toSend);
-            LoggerUtil.getLogger().fine("Sent " + toSend + "/" + peerConnection);
-
-            if (waitreply) {
-                PeerMessage onereply = peerConnection.recvData();
-                while (onereply != null) {
-                    msgreply.add(onereply);
-                    LoggerUtil.getLogger().fine("Got reply " + onereply);
-                    onereply = peerConnection.recvData();
-                }
-            }
-
-            peerConnection.close();
-        } catch (IOException e) {
-            LoggerUtil.getLogger().warning("Error: " + e + "/"
-                    + pd + "/" + msgtype);
-        }
-        return msgreply;
-    }
-
-    public List<PeerMessage> connectAndSendBlock(PeerInfo pd, String msgtype,
-                                                 Block block, boolean waitreply) {
-        List<PeerMessage> msgreply = new ArrayList<>();
-        try {
-            PeerConnection peerConnection = new PeerConnection(pd);
-            PeerMessage toSend = new PeerMessage(msgtype, Converter.serialize(block));
-            peerConnection.sendData(toSend);
-            LoggerUtil.getLogger().info("Sent " + toSend + "/" + peerConnection);
-
-            if (waitreply) {
-                PeerMessage onereply = peerConnection.recvData();
-                while (onereply != null) {
-                    msgreply.add(onereply);
-                    LoggerUtil.getLogger().info("Got reply " + onereply);
-                    onereply = peerConnection.recvData();
-                }
-            }
-
-            peerConnection.close();
-        } catch (IOException e) {
-            LoggerUtil.getLogger().warning("Error: " + e + "/"
-                    + pd + "/" + msgtype);
-        }
-        return msgreply;
-    }
-
     public void mainLoop() {
         try {
             ServerSocket s = makeServerSocket(peerInfo.getPort());
@@ -164,14 +111,12 @@ public class Node {
                     continue;
                 }
             }
-
             s.close();
         } catch (SocketException e) {
             LoggerUtil.getLogger().severe("Stopping main loop (SocketExc): " + e);
         } catch (IOException e) {
             LoggerUtil.getLogger().severe("Stopping main loop (IOExc): " + e);
         }
-
         shutdown = true;
     }
 
@@ -244,16 +189,12 @@ public class Node {
 
             PeerConnection peerConnection = new PeerConnection(null, socket);
             PeerMessage peerMessage = peerConnection.recvData();
-            if (!handlers.containsKey(peerMessage.getMsgType())) {
-                LoggerUtil.getLogger().info("Not handled: " + peerMessage + "MSG_TYPE: " + peerMessage.getMsgType());
-            } else {
-                LoggerUtil.getLogger().info("Handling: " + peerMessage);
-                handlers.get(peerMessage.getMsgType()).handleMessage(peerConnection,
-                        peerMessage);
-            }
+            LoggerUtil.getLogger().info("Handling: " + peerMessage);
+            handlers
+                    .get(peerMessage.getMsgType())
+                    .handleMessage(peerConnection, peerMessage);
             LoggerUtil.getLogger().info("Disconnecting incoming: " + peerConnection);
             peerConnection.close();
         }
     }
-
 }
