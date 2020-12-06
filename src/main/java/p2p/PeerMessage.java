@@ -68,7 +68,7 @@ public class PeerMessage {
     }
 
     public byte[] getMsgDataBytes() {
-        return data.clone();
+        return data;
     }
 
     public byte[] toBytes() {

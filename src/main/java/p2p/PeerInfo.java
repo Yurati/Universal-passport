@@ -3,9 +3,11 @@ package p2p;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.io.Serializable;
+
 @Getter
 @Setter
-public class PeerInfo {
+public class PeerInfo implements Serializable {
     private String id;
     private String host;
     private int port;

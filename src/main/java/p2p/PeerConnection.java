@@ -5,14 +5,13 @@ import p2p.socket.SocketInterface;
 import p2p.util.LoggerUtil;
 
 import java.io.IOException;
-import java.net.UnknownHostException;
 
 public class PeerConnection {
     private final PeerInfo peerInfo;
     private SocketInterface socket;
 
     public PeerConnection(PeerInfo info)
-            throws IOException, UnknownHostException {
+            throws IOException {
         peerInfo = info;
         socket = new SimpleSocket(peerInfo.getHost(),
                 peerInfo.getPort());
