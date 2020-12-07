@@ -8,7 +8,7 @@ import java.io.IOException;
 
 public class Main3 {
     public static void main(String[] args) {
-        PeerInfo peerInfo = new PeerInfo(9091);
+        PeerInfo peerInfo = new PeerInfo("localhost", 9091);
         EmbassyAgent embassyAgent = new EmbassyAgent(10, peerInfo);
         new Thread(embassyAgent::mainLoop).start();
         PeerInfo peerInfo2 = new PeerInfo(9090);
